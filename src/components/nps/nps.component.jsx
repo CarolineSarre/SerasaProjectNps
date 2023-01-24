@@ -1,50 +1,92 @@
 import React from "react";
 import logo from '../assets/logo.svg';
-import { useState } from 'react';
+import {useState} from 'react';
 import './nps.css';
 import StarRating from "../starRating/starRating.component";
+import axios from 'axios';
 
+const url = "http://localhost:5000/coments"
 
-function log(value) {
-    console.log(value);
-  }
-const HandleForm = (event) =>{
-    event.preventDefault()
-}
-function Nps(){
+function Nps() {
+    const [name, setName] = useState('');
+    const [coment, setComent] = useState('');
+    const [star, setStar] = useState(0);
 
-    const [name, setName] = useState("")
-    const [coment, setComent] = useState("")
-    
+    const HandleForm = (e) => {
+        e.preventDefault();
+    }
 
-    return <div className='container'>
-        <div className="box">
-            <img src={logo} className="logo" alt="logo" />
-            <p>
-                Conte o quanto está satisfeito com nossos serviços.
-            </p>
-            <h6 className="fullwidht pb-5">Marque de 1 à 5 estrelas</h6>
-            <StarRating className="pb-5" onChange={log} required />
-            <form onSubmit={HandleForm}>
-                <label className="left">Nome
-                    <input
-                    type="text" 
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    required
-                    className="block" />
-                </label>
+    const HandleStarChange = (value) => {
+        setStar(value)
+    }
+    const handleChange = (e) => {
+        setName(e.target.value);
+    }
+    const handleComentChange = (e) => {
+        setComent(e.target.value);
+    }
+    const addNewComent = () => {
+        if (name !== "" || star >= 1) {
+            axios.post(url, {
+                name: name,
+                star: star,
+                coment: coment
+            }).then(response => {
+                console.log(response.data)
+            }).catch(error => console.log(error))
+        } else {
+            alert("Selecione a quantidade de estrelas e digite seu nome para enviar uma avaliação")
+        }
+
+    }
+
+    return (
+        <div className='container'>
+            <div className="box">
+                <img src={logo}
+                    className="logo"
+                    alt="logo"/>
+                <p>
+                    Conte o quanto está satisfeito com nossos serviços.
+                </p>
+                <h6 className="fullwidht pb-5">Marque de 1 à 5 estrelas</h6>
+
+                <StarRating className="pb-5"
+                    onChange={HandleStarChange}
+                    required/>
+
+                <form id="form"
+                    onSubmit={
+                        (e) => {
+                            HandleForm(e)
+                        }
+                }>
+                    <label className="left">Nome
+                        <input className="block" type="text"
+                            value={name}
+                            onChange={
+                                (e) => {
+                                    handleChange(e)
+                                }
+                            }/>
+                    </label>
                 <label>Comentário (Opicional)
-                    <input
-                    type="text" 
-                    value={coment}
-                    onChange={(e) => setComent(e.target.value)}
-                    />
+                    <input type="text"
+                        value={coment}
+                        onChange={
+                            (e) => {
+                                handleComentChange(e)
+                            }
+                        }/>
+
                 </label>
-                <button className="primary" type="submit">Enviar Avaliação</button>
-            </form>
-        </div>
+
+            <button className="primary" type="submit"
+                onClick={addNewComent}>Enviar Avaliação</button>
+        </form>
     </div>
+</div>
+    );
 }
 
 export default Nps;
