@@ -4,6 +4,7 @@ import {useState} from 'react';
 import './nps.css';
 import StarRating from "../starRating/starRating.component";
 import axios from 'axios';
+import Loading from "../loader/loader";
 
 const url = "http://localhost:5000/coments"
 
@@ -11,6 +12,7 @@ function Nps() {
     const [name, setName] = useState('');
     const [coment, setComent] = useState('');
     const [star, setStar] = useState(0);
+    const [removeLoading, setRemoveLoading] = useState(false);
 
     const HandleForm = (e) => {
         e.preventDefault();
@@ -27,13 +29,15 @@ function Nps() {
     }
     const addNewComent = () => {
         if (name !== "" || star >= 1) {
-            axios.post(url, {
+            setRemoveLoading(true);
+            setTimeout(() => {axios.post(url, {
                 name: name,
                 star: star,
-                coment: coment
+                coment: coment,
             }).then(response => {
                 console.log(response.data)
-            }).catch(error => console.log(error))
+                setRemoveLoading(false);
+            }).catch(error => console.log(error))}, 3000 )          
         } else {
             alert("Selecione a quantidade de estrelas e digite seu nome para enviar uma avaliação")
         }
@@ -42,6 +46,7 @@ function Nps() {
 
     return (
         <div className='container'>
+            {removeLoading && <Loading/>}
             <div className="box">
                 <img src={logo}
                     className="logo"
