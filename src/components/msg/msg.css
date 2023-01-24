@@ -1,0 +1,10 @@
+.message{
+    width: 330px;
+    height: 150px;
+    background: rgba(147, 239, 147, 0.7);
+    border-radius: 5px;
+    padding: 3px;
+    position:absolute;
+    top:18%;
+    z-index: 6;
+}
